@@ -1,5 +1,7 @@
 <?php
-namespace Core\Engine\Components\Zadarma\Response;
+
+namespace Zadarma_API\Response;
+
 
 class NumberLookup extends Response
 {

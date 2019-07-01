@@ -1,0 +1,63 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "309bdf3f8383b6319e64a83c6cb54917",
+    "packages": [
+        {
+            "name": "zadarma/user-api-v1",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zadarma/user-api-v1.git",
+                "reference": "8a22caa9eec0abbac3bed3436ffdd48651b7e53d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zadarma/user-api-v1/zipball/8a22caa9eec0abbac3bed3436ffdd48651b7e53d",
+                "reference": "8a22caa9eec0abbac3bed3436ffdd48651b7e53d",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Zadarma_API\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Zadarma",
+                    "email": "github@zadarma.com"
+                }
+            ],
+            "description": "PHP class for Zadarma API",
+            "homepage": "https://github.com/zadarma/user-api-v1",
+            "keywords": [
+                "api",
+                "free calls",
+                "pbx",
+                "sip",
+                "zadarma"
+            ],
+            "time": "2019-04-15T09:00:47+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

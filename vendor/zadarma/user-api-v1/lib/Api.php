@@ -1,12 +1,48 @@
-<?php 
-namespace Core\Engine\Components\Zadarma;
+<?php
+
+
+namespace Zadarma_API;
+
+
+use Zadarma_API\Response\Balance;
+use Zadarma_API\Response\DirectNumber;
+use Zadarma_API\Response\NumberLookup;
+use Zadarma_API\Response\PbxInternal;
+use Zadarma_API\Response\PbxRecording;
+use Zadarma_API\Response\PbxRecordRequest;
+use Zadarma_API\Response\PbxRedirection;
+use Zadarma_API\Response\PbxStatistics;
+use Zadarma_API\Response\PbxStatus;
+use Zadarma_API\Response\Price;
+use Zadarma_API\Response\Redirection;
+use Zadarma_API\Response\SipRedirection;
+use Zadarma_API\Response\SipRedirectionStatus;
+use Zadarma_API\Response\RequestCallback;
+use Zadarma_API\Response\Sip;
+use Zadarma_API\Response\SipCaller;
+use Zadarma_API\Response\SipStatus;
+use Zadarma_API\Response\Sms;
+use Zadarma_API\Response\Statistics;
+use Zadarma_API\Response\Tariff;
+use Zadarma_API\Response\Timezone;
+use Zadarma_API\Webhook\AbstractNotify;
+use Zadarma_API\Webhook\NotifyAnswer;
+use Zadarma_API\Webhook\NotifyEnd;
+use Zadarma_API\Webhook\NotifyInternal;
+use Zadarma_API\Webhook\NotifyIvr;
+use Zadarma_API\Webhook\NotifyOutEnd;
+use Zadarma_API\Webhook\NotifyOutStart;
+use Zadarma_API\Webhook\NotifyRecord;
+use Zadarma_API\Webhook\NotifyStart;
 
 class Api extends Client
 {
     const VERSION = 'v1';
+
     const PBX_REDIRECTION_NO_GREETING = 'no';
     const PBX_REDIRECTION_STANDART_GREETING = 'standart';
     const PBX_REDIRECTION_OWN_GREETING = 'own';
+
     const IN_CALLS = 'in';
     const OUT_CALLS = 'out';
 
@@ -15,7 +51,7 @@ class Api extends Client
      *
      * @return Balance
      * @throws ApiException
-    */
+     */
     public function getBalance()
     {
         $data = $this->request('info/balance');
@@ -29,7 +65,7 @@ class Api extends Client
      * @param null|string $callerId
      * @return Price
      * @throws ApiException
-    */
+     */
     public function getPrice($number, $callerId = null)
     {
         $params = ['number' => self::filterNumber($number)];
@@ -45,7 +81,7 @@ class Api extends Client
      *
      * @return Timezone
      * @throws ApiException
-    */
+     */
     public function getTimezone()
     {
         $data = $this->request('info/timezone');
@@ -57,7 +93,7 @@ class Api extends Client
      *
      * @return Tariff
      * @throws ApiException
-    */
+     */
     public function getTariff()
     {
         $data = $this->request('tariff');
@@ -78,7 +114,7 @@ class Api extends Client
      *  if the call is successful.);
      * @return RequestCallback
      * @throws ApiException
-    */
+     */
     public function requestCallback($from, $to, $sip = null, $predicted = null)
     {
         $params = [
@@ -98,7 +134,7 @@ class Api extends Client
      *
      * @return array
      * @throws ApiException
-    */
+     */
     public function getSip()
     {
         $data = $this->request('sip');
@@ -117,7 +153,7 @@ class Api extends Client
      * @param $sipId
      * @return SipStatus
      * @throws ApiException
-    */
+     */
     public function getSipStatus($sipId)
     {
         $data = $this->request('sip/' . self::filterNumber($sipId) . '/status');
@@ -130,7 +166,7 @@ class Api extends Client
      * @param null|integer $sipId Selection of the specific SIP ID.
      * @return Redirection[]
      * @throws ApiException
-    */
+     */
     public function getSipRedirection($sipId = null)
     {
         $params = $sipId ? ['id' => self::filterNumber($sipId)] : [];
@@ -142,7 +178,7 @@ class Api extends Client
      * Return information about the user's phone numbers.
      * @return DirectNumber[]
      * @throws ApiException
-    */
+     */
     public function getDirectNumbers()
     {
         $data = $this->request('direct_numbers');
@@ -153,7 +189,7 @@ class Api extends Client
      * Return online status of the PBX extension number.
      * @return PbxInternal
      * @throws ApiException
-    */
+     */
     public function getPbxInternal()
     {
         $data = $this->request('pbx/internal');
@@ -165,7 +201,7 @@ class Api extends Client
      * @param $pbxId
      * @return PbxStatus
      * @throws ApiException
-    */
+     */
     public function getPbxStatus($pbxId)
     {
         $data = $this->request('pbx/internal/' . self::filterNumber($pbxId) . '/status');
@@ -180,7 +216,7 @@ class Api extends Client
      * @param integer|null $lifetime The link's lifetime in seconds (minimum - 180, maximum - 5184000, default - 1800)
      * @return PbxRecordRequest
      * @throws ApiException
-    */
+     */
     public function getPbxRecord($callId, $pbxCallId, $lifetime = null)
     {
         $params = array_filter([
@@ -202,7 +238,7 @@ class Api extends Client
      * @param integer $pbxNumber PBX extension number
      * @return PbxRedirection
      * @throws ApiException
-    */
+     */
     public function getPbxRedirection($pbxNumber)
     {
         $data = $this->request('pbx/redirection', ['pbx_number' => self::filterNumber($pbxNumber)]);
@@ -225,8 +261,9 @@ class Api extends Client
      *  (the maximum value is 1000, the default value is 1000)
      * @return Statistics
      * @throws ApiException
-    */
-    public function getStatistics($start = null, $end = null, $sip = null, $costOnly = null, $type = null, $skip = null, $limit = null)
+     */
+    public function getStatistics($start = null, $end = null, $sip = null, $costOnly = null, $type = null, $skip = null,
+                                  $limit = null)
     {
         $params = [
             'start' => $start,
@@ -253,8 +290,9 @@ class Api extends Client
      * @param string|null $callType IN_CALLS for incoming calls, OUT_CALLS for outgoing, null for both
      * @return PbxStatistics
      * @throws ApiException
-    */
-    public function getPbxStatistics($start = null, $end = null, $newFormat = true, $callType = null, $skip = null, $limit = null)
+     */
+    public function getPbxStatistics($start = null, $end = null, $newFormat = true, $callType = null,
+                                     $skip = null, $limit = null)
     {
         $params = [
             'start' => $start,
@@ -277,7 +315,7 @@ class Api extends Client
      * @param string|null $widget_id
      * @return PbxStatistics
      * @throws ApiException
-    */
+     */
     public function getCallbackWidgetStatistics($start = null, $end = null, $widget_id = null)
     {
         $params = [
@@ -287,6 +325,7 @@ class Api extends Client
         ];
         $data = $this->request('statistics/callback_widget', self::filterParams($params));
         return new PbxStatistics($data);
+
     }
 
     /**
@@ -296,7 +335,7 @@ class Api extends Client
      * (from the list of confirmed or purchased phone numbers).
      * @return SipCaller
      * @throws ApiException
-    */
+     */
     public function setSipCallerId($sipId, $number)
     {
         $params = [
@@ -307,13 +346,14 @@ class Api extends Client
         return new SipCaller($data);
     }
 
+
     /**
      * Call forwarding switch on/off based on the SIP number.
      * @param integer $sipId
      * @param bool $statusOn True for 'on' and false for 'off' status.
      * @return SipRedirectionStatus
      * @throws ApiException
-    */
+     */
     public function setSipRedirectionStatus($sipId, $statusOn)
     {
         $params = [
@@ -330,7 +370,7 @@ class Api extends Client
      * @param string $number phone number
      * @return SipRedirection
      * @throws ApiException
-    */
+     */
     public function setSipRedirectionNumber($sipId, $number)
     {
         $params = [
@@ -352,7 +392,7 @@ class Api extends Client
      * @param string|null $email
      * @return PbxRecording
      * @throws ApiException
-    */
+     */
     public function setPbxRecording($sipId, $status, $email = null)
     {
         if (!in_array($status, ['on', 'off', 'on_email', 'off_email', 'on_store', 'off_store'])) {
@@ -380,7 +420,7 @@ class Api extends Client
      *  confirmed phone numbers).
      * @return Sms
      * @throws ApiException
-    */
+     */
     public function sendSms($to, $message, $callerId = null)
     {
         $params = [
@@ -399,7 +439,7 @@ class Api extends Client
      * @param string $number Phone number.
      * @return NumberLookup
      * @throws ApiException
-    */
+     */
     public function numberLookup($number)
     {
         $data = $this->request('info/number_lookup', ['numbers' => self::filterNumber($number)], 'post');
@@ -410,7 +450,7 @@ class Api extends Client
      * Number lookup for multiple phone numbers.
      * @param string[] $numbers Phone number.
      * @throws ApiException
-    */
+     */
     public function numberLookupMultiple($numbers)
     {
         $numbers = array_filter(array_map('\Zadarma_API\Api::filterNumber', $numbers));
@@ -422,7 +462,7 @@ class Api extends Client
      * @param integer $pbxNumber PBX extension number.
      * @return PbxRedirection
      * @throws ApiException
-    */
+     */
     public function setPbxRedirectionOff($pbxNumber)
     {
         $params = [
@@ -441,7 +481,7 @@ class Api extends Client
      * @param bool $setCallerId Setting up your CallerID during the call forwarding.
      * @return PbxRedirection
      * @throws ApiException
-    */
+     */
     public function setPbxPhoneRedirection($pbxNumber, $destination, $always, $setCallerId)
     {
         $params = [
@@ -451,6 +491,7 @@ class Api extends Client
             'destination' => self::filterNumber($destination),
             'set_caller_id' => $setCallerId ? 'on' : 'off',
         ];
+
         $data = $this->request('pbx/redirection', $params, 'post');
         return new PbxRedirection($data);
     }
@@ -466,7 +507,7 @@ class Api extends Client
      *  Specified only when greeting = own.
      * @return PbxRedirection
      * @throws ApiException
-    */
+     */
     public function setPbxVoicemailRedirection($pbxNumber, $destination, $always, $greeting, $greetingFile = null)
     {
         if (!filter_var($destination, FILTER_VALIDATE_EMAIL)) {
@@ -506,7 +547,7 @@ class Api extends Client
      * @param array|null $postData Data for model populating. If null, $_POST values used.
      * @param null $signature
      * @return null|NotifyStart
-    */
+     */
     public function getWebhookEvent($eventFilter = null, $postData = null, $signature = null)
     {
         if ($postData === null) {
@@ -515,6 +556,7 @@ class Api extends Client
         if (empty($postData['event']) || ($eventFilter && !in_array($postData['event'], $eventFilter))) {
             return null;
         }
+
         if ($signature === null) {
             $headers = getallheaders();
             if (empty($headers['Signature'])) {
@@ -523,37 +565,48 @@ class Api extends Client
                 $signature = $headers['Signature'];
             }
         }
+
         switch ($postData['event']) {
             case AbstractNotify::EVENT_START:
                 $notify = new NotifyStart($postData);
                 break;
+
             case AbstractNotify::EVENT_IVR:
                 $notify = new NotifyIvr($postData);
                 break;
+
             case AbstractNotify::EVENT_INTERNAL:
                 $notify = new NotifyInternal($postData);
                 break;
+
             case AbstractNotify::EVENT_ANSWER:
                 $notify = new NotifyAnswer($postData);
                 break;
+
             case AbstractNotify::EVENT_END:
                 $notify = new NotifyEnd($postData);
                 break;
+
             case AbstractNotify::EVENT_OUT_START:
                 $notify = new NotifyOutStart($postData);
                 break;
+
             case AbstractNotify::EVENT_OUT_END:
                 $notify = new NotifyOutEnd($postData);
                 break;
+
             case AbstractNotify::EVENT_RECORD:
                 $notify = new NotifyRecord($postData);
                 break;
+
             default:
                 return null;
         }
+
         if ($signature != $this->encodeSignature($notify->getSignatureString())) {
             return null;
         }
+
         return $notify;
     }
 
@@ -565,7 +618,7 @@ class Api extends Client
      * @param string $requestType
      * @return array
      * @throws ApiException
-    */
+     */
     public function request($method, $params = [], $requestType = 'get')
     {
         $result = $this->call('/' . self::VERSION . '/' . $method . '/', $params, $requestType);
@@ -578,13 +631,14 @@ class Api extends Client
         }
         return $result;
     }
+
     /**
      * Filter from non-digit symbols.
      *
      * @param string $number
      * @return string
      * @throws ApiException
-    */
+     */
     protected static function filterNumber($number)
     {
         $number = preg_replace('/\D/', '', $number);
@@ -598,7 +652,7 @@ class Api extends Client
      * Remove null value items from params.
      * @param $params
      * @return mixed
-    */
+     */
     protected static function filterParams($params)
     {
         foreach ($params as $k => $v) {
@@ -615,7 +669,7 @@ class Api extends Client
      * @param array $array
      * @param string $resultClassName
      * @return array
-    */
+     */
     protected static function arrayToResultObj($array, $resultClassName)
     {
         foreach ($array as &$item) {

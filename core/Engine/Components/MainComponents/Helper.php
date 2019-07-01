@@ -1,8 +1,14 @@
 <?php
 namespace Core\Engine\Components\MainComponents;
 
-class Handler
+class Helper
 {
+    public static function view($name, $data = [])
+    {
+        extract($data);
+        return require realpath(__DIR__ . "/../../../App/Views/$name.view.php");
+    }
+
     public static function redirect($path)
     {
         header("Location: /$path");

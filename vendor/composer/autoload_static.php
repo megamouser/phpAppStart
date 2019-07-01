@@ -7,6 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInit692af090ef7e5e48ea34bdcf96932e43
 {
     public static $prefixLengthsPsr4 = array (
+        'Z' => 
+        array (
+            'Zadarma_API\\' => 12,
+        ),
         'C' => 
         array (
             'Core\\' => 5,
@@ -14,6 +18,10 @@ class ComposerStaticInit692af090ef7e5e48ea34bdcf96932e43
     );
 
     public static $prefixDirsPsr4 = array (
+        'Zadarma_API\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zadarma/user-api-v1/lib',
+        ),
         'Core\\' => 
         array (
             0 => __DIR__ . '/../..' . '/core',

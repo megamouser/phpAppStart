@@ -1,5 +1,8 @@
 <?php
-namespace Core\Engine\Components\Zadarma\Response;
+
+
+namespace Zadarma_API\Response;
+
 
 class DirectNumber extends Response
 {
@@ -45,14 +48,13 @@ class DirectNumber extends Response
     /** @var bool the automatic phone number extension is enabled or disabled
      * (for common, revenue, rufree)
      */
-
     public $autorenew;
-    /** @var string the phone number is being tested or not. */
 
+    /** @var string the phone number is being tested or not. */
     public $is_on_test;
+
     /** @var string phone number type: common (virtual number), inum (free international number),
      * rufree (free Moscow number), revenue (free Moscow 495 number).
-    */
-
+     */
     public $type;
 }

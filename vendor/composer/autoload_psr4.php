@@ -6,5 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Zadarma_API\\' => array($vendorDir . '/zadarma/user-api-v1/lib'),
     'Core\\' => array($baseDir . '/core'),
 );

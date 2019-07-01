@@ -1,11 +1,13 @@
 <?php
-namespace Core\Engine\Components\Zadarma;
+
+namespace Zadarma_API;
 use Exception;
 
 class Client
 {
     const PROD_URL = 'https://api.zadarma.com';
     const SANDBOX_URL = 'https://api-sandbox.zadarma.com';
+
     private $url;
     private $key;
     private $secret;
@@ -16,14 +18,14 @@ class Client
      * @param $key
      * @param $secret
      * @param bool|false $isSandbox
-    */
+     */
     public function __construct($key, $secret, $isSandbox = false)
     {
         $this->url = $isSandbox ? static::SANDBOX_URL : static::PROD_URL;
         $this->key = $key;
         $this->secret = $secret;
     }
-    
+
     /**
      * @param $method - API method, including version number
      * @param array $params - Query params
@@ -33,7 +35,7 @@ class Client
      * @return mixed
      * @throws Exception
      *
-    */
+     */
     public function call($method, $params = array(), $requestType = 'get', $format = 'json')
     {
         if (!is_array($params)) {
@@ -41,11 +43,9 @@ class Client
         }
 
         $type = strtoupper($requestType);
-
         if (!in_array($type, array('GET', 'POST', 'PUT', 'DELETE'))) {
             $type = 'GET';
         }
-
         $params['format'] = $format;
 
         $options = array(
@@ -67,7 +67,7 @@ class Client
             $options[CURLOPT_POST] = true;
             if(array_filter($params, 'is_object')){
                 $options[CURLOPT_POSTFIELDS] = $params;
-            } else {
+            }else{
                 $options[CURLOPT_POSTFIELDS] = $this->httpBuildQuery($params);
             }
         }
@@ -90,7 +90,7 @@ class Client
 
     /**
      * @return int
-    */
+     */
     public function getHttpCode()
     {
         return $this->httpCode;
@@ -98,7 +98,7 @@ class Client
 
     /**
      * @return array
-    */
+     */
     public function getLimits()
     {
         return $this->limits;
@@ -107,7 +107,7 @@ class Client
     /**
      * @param $signatureString
      * @return string
-    */
+     */
     public function encodeSignature($signatureString)
     {
         return base64_encode(hash_hmac('sha1', $signatureString, $this->secret));
@@ -118,13 +118,14 @@ class Client
      * @param $params
      *
      * @return array
-    */
+     */
     private function getAuthHeader($method, $params)
     {
         $params = array_filter($params, function($a){return !is_object($a);});
         ksort($params);
         $paramsString = $this->httpBuildQuery($params);
         $signature = $this->encodeSignature($method . $paramsString . md5($paramsString));
+
         return array('Authorization: ' . $this->key . ':' . $signature);
     }
 
@@ -133,12 +134,13 @@ class Client
      * @param $line
      *
      * @return int
-    */
+     */
     private function parseHeaders($curl, $line)
     {
         if (preg_match('/^X-RateLimit-([a-z]+):\s([0-9]+)/i', $line, $match)) {
             $this->limits[$match[1]] = (int) $match[2];
         }
+
         return strlen($line);
     }
 
@@ -148,7 +150,7 @@ class Client
      * @param array $params
      *
      * @return string
-    */
+     */
     private function httpBuildQuery($params = array())
     {
         return http_build_query($params, null, '&', PHP_QUERY_RFC1738);
